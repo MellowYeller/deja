@@ -1,0 +1,8 @@
+Cache game modes and map info
+!undid iridium
+!streak -arena || -warzone || -custom streaks
+!trend for last 20 games win/loss
+!info for player info (rank, games played this season, etc)
+!rank
+basic mcc stats
+Verify Gamertag upon registration
