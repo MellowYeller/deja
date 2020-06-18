@@ -1,6 +1,6 @@
 {
   "name": "deja",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Discord bot that provides info from the Halo 5 API.",
   "main": "index.js",
   "dependencies": {
