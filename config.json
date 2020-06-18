@@ -1,8 +1,0 @@
-{
-  "prefix": "!",
-  "token": "YOUR BOT TOKEN HERE",
-  "halo5Key": "YOUR HALO API KEY HERE",
-  "developerIds": [
-    "YOUR DISCORD ID HERE"
-  ]
-}
