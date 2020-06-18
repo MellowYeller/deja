@@ -8,10 +8,14 @@ module.exports = {
 	name: 'halo5',
 	description: 'API for the Halo 5 API.',
 
-	async getMatchHistory(gamerTag, count = 25, startIndex = 0) {
-		const endPoint = `${site}stats/h5/players/${gamerTag}/matches?count=${count}&start=${startIndex}`;
+	async getMatchHistory(gamerTag, count = 25, startIndex = 0, modes = '') {
+		if (modes) {
+			modes = '&modes=' + modes;
+		}
+		const endPoint = `${site}stats/h5/players/${gamerTag}/matches?count=${count}&start=${startIndex}${modes}&include-times=true`;
 		const response = await fetch(endPoint, header);
 		const history = await response.json();
+		if (history.Results === []) throw 'No player data';
 		return history.Results;
 	},
 
