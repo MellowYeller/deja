@@ -6,3 +6,4 @@ Cache game modes and map info
 !rank
 basic mcc stats
 Verify Gamertag upon registration
+Winston for better logging

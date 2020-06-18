@@ -3,12 +3,12 @@ const Discord = require('discord.js');
 const { prefix, token, developerIds } = require('./config.json');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-client.profiles = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.name, command);
 }
+client.profiles = new Discord.Collection();
 const profileDirs = fs.readdirSync('./cache/users');
 for (const dir of profileDirs) {
 	const profile = require(`./cache/users/${dir}/profile.json`);
@@ -16,7 +16,21 @@ for (const dir of profileDirs) {
 }
 const cooldowns = new Discord.Collection();
 
+const activitiesList = [
+	'Halo 5: Guardians',
+	'with Spartans',
+	'!timeplayed',
+	'!history',
+	'!streak',
+	'!register',
+	'!lastgame',
+];
+
 client.once('ready', () => {
+	setInterval(() => {
+		const index = Math.floor(Math.random() * (activitiesList.length - 1) + 1);
+		client.user.setActivity(activitiesList[index]);
+	}, 7000);
 	client.user.setActivity('Halo 5: Guardians');
 	console.log('Logged in as Deja!');
 });
