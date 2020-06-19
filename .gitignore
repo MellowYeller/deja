@@ -2,3 +2,4 @@ node_modules/
 cache/users/*
 config.json
 package-lock.json
+*.swp
