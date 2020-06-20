@@ -1,5 +1,7 @@
 node_modules/
 cache/users/*
+cache/halo5/*
+commands/test.js
 config.json
 package-lock.json
 *.swp
