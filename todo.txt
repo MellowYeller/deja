@@ -1,9 +1,6 @@
 Comment code properly
 Cache game modes and map info
 !undid iridium
-!streak -arena || -warzone || -custom streaks
-!info for player info (rank, games played this season, etc)
-!rank
 basic mcc stats
 Verify Gamertag upon registration
 Winston for better logging

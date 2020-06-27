@@ -26,12 +26,12 @@ module.exports = {
 
 			const [ arenaServiceRecord, customServiceRecord, warzoneServiceRecord, campaignServiceRecord ] = await Promise.all([ arenaPromise, customPromise, warzonePromise, campaignPromise ]);
 
-			const gamertag = arenaServiceRecord.Result.PlayerId.Gamertag;
+			const gamertag = arenaServiceRecord.PlayerId.Gamertag;
 
-			const arenaISODuration = arenaServiceRecord.Result.ArenaStats.TotalTimePlayed;
-			const customISODuration = customServiceRecord.Result.CustomStats.TotalTimePlayed;
-			const warzoneISODuration = warzoneServiceRecord.Result.WarzoneStat.TotalTimePlayed;
-			const campaignISODuration = campaignServiceRecord.Result.CampaignStat.TotalTimePlayed;
+			const arenaISODuration = arenaServiceRecord.ArenaStats.TotalTimePlayed;
+			const customISODuration = customServiceRecord.CustomStats.TotalTimePlayed;
+			const warzoneISODuration = warzoneServiceRecord.WarzoneStat.TotalTimePlayed;
+			const campaignISODuration = campaignServiceRecord.CampaignStat.TotalTimePlayed;
 
 			const arenaDate = halo5.parseISODuration(arenaISODuration);
 			const customDate = halo5.parseISODuration(customISODuration);

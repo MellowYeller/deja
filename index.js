@@ -24,6 +24,7 @@ const activitiesList = [
 	'!streak',
 	'!register',
 	'!lastgame',
+	'!rank',
 ];
 
 client.once('ready', () => {
