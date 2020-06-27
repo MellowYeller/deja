@@ -6,7 +6,6 @@ module.exports = {
 	aliases: [ 'last20', 'history', 'h', '20' ],
 	description: 'Displays the win/loss ratio of the last 20 games.',
 	usage: '[-OPTION] [GAMERTAG]',
-	devOnly: true,
 	supportsProfiles: true,
 
 	async execute(message, args) {
