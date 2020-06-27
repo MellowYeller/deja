@@ -16,20 +16,12 @@ module.exports = {
 		const CSRDesignations = await halo5.getCSRDesignations();
 		// Show:
 		// Highest earned rank, playlist, & season
-		// Current highest CSR, playlist (if played this season)
-		// CSR percentile (!!)
-		// Games completed
-		// Time played
-		// Lifetime games played
-		// Lifetime kills
 		// Lifetime deaths
 		// Lifetime favorite weapon
-		// Lifetime played
-		// Lifetime games completed
 		const gamertag = sr.PlayerId.Gamertag;
 		const rank = sr.SpartanRank;
 		const highestCSRPlaylist = playlists.find(highCSRPlaylist => highCSRPlaylist.id === sr.ArenaStats.HighestCsrPlaylistId);
-		const highestCSRPlaylistName = highestCSRPlaylist.name;
+		const highestCSRPlaylistName = highestCSRPlaylist.name.trim();
 		const highestCSRStats = sr.ArenaStats.HighestCsrAttained;
 		let highestCSRRank = '';
 		if (highestCSRStats.DesignationId === 0) {
@@ -44,14 +36,39 @@ module.exports = {
 		else {
 			highestCSRRank = `${CSRDesignations[highestCSRStats.DesignationId].name} ${highestCSRStats.Tier}`;
 		}
+		const lifeAccuracy = (sr.ArenaStats.TotalShotsLanded / sr.ArenaStats.TotalShotsFired * 100).toFixed(1);
+		const lifeKills = sr.ArenaStats.TotalKills;
+		const lifeDeaths = sr.ArenaStats.TotalDeaths;
+		const lifeKD = (lifeKills / Math.max(lifeDeaths, 1)).toFixed(1);
+		const lifeDamage = Math.round(sr.ArenaStats.TotalWeaponDamage);
+		const lifeGamesCompleted = sr.ArenaStats.TotalGamesCompleted;
+		const lifeGamesWon = sr.ArenaStats.TotalGamesWon;
+		const lifeWinPercent = (Math.max(1, lifeGamesWon) / lifeGamesCompleted * 100).toFixed(1);
+		const lifeTimePlayed = halo5.parseISODuration(sr.ArenaStats.TotalTimePlayed);
+		const lifeDays = Math.floor(lifeTimePlayed.getTime() / 86400000);
+		const lifeHours = lifeTimePlayed.getHours();
+		const lifeMinutes = lifeTimePlayed.getMinutes();
+		const lifeSeconds = Math.floor(lifeTimePlayed.getSeconds());
 		const embed = new Discord.MessageEmbed()
 			.setTitle(gamertag)
 			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertag.replace(' ', '%20')}`)
 			.setAuthor(rank)
-			.addFields({
-				name: 'Highest Lifetime CSR:',
-				value: `${highestCSRPlaylistName}, ${highestCSRRank}`,
-			});
+			.addFields(
+				{
+					name: 'Highest Lifetime CSR:',
+					value: `${highestCSRPlaylistName}, ${highestCSRRank}`,
+				},
+				{
+					name: 'Lifetime Stats:',
+					value: `Kills: ${lifeKills}\nDeaths: ${lifeDeaths}\nK/D: ${lifeKD}\nAccuracy: ${lifeAccuracy}%\nDamage: ${lifeDamage}`,
+					inline: true,
+				},
+				{
+					name: '...',
+					value: `Time Played: ${lifeDays} days, ${lifeHours} hours, ${lifeMinutes} minutes, ${lifeSeconds} seconds\nGames: ${lifeGamesCompleted}\nWon: ${lifeGamesWon}\nWin %: ${lifeWinPercent}`,
+					inline: true,
+				},
+			);
 		const playlistStats = sr.ArenaStats.ArenaPlaylistStats;
 		// Create table for current season playlist stats
 		let table = '```';

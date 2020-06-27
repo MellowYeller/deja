@@ -26,7 +26,7 @@ module.exports = {
 
 			const [ arenaServiceRecord, customServiceRecord, warzoneServiceRecord, campaignServiceRecord ] = await Promise.all([ arenaPromise, customPromise, warzonePromise, campaignPromise ]);
 
-			const gamertag = arenaServiceRecord.Result.PlayerId.Gamertag;
+			const gamertag = arenaServiceRecord.PlayerId.Gamertag;
 
 			const arenaISODuration = arenaServiceRecord.ArenaStats.TotalTimePlayed;
 			const customISODuration = customServiceRecord.CustomStats.TotalTimePlayed;
