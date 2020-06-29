@@ -38,14 +38,25 @@ module.exports = {
 		}
 		gamerTag = matchHistory[0].Players[0].Player.Gamertag;
 		const results = [];
+		let matchesToday = 0;
+		const today = new Date(Date.now());
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		today.setMilliseconds(0);
 		let index = 0;
 		let winString = '';
 		let midString = '';
 		let lossString = '';
 		for (const match of matchHistory) {
 			const result = match.Players[0].Result;
+			const matchDay = new Date(match.MatchCompletedDate.ISO8601Date);
+			matchDay.setHours(0);
+			matchDay.setMinutes(0);
+			matchDay.setSeconds(0);
+			matchDay.setMilliseconds(0);
+			if (today.getTime() === matchDay.getTime()) matchesToday++;
 			results[index] = result;
-			index++;
 			if (result === 3) {
 				winString = 'W' + winString;
 				midString = '-' + midString;
@@ -66,19 +77,27 @@ module.exports = {
 				midString = '-' + midString;
 				lossString = 'Q' + lossString;
 			}
+			index++;
 		}
 		winString = '+  |' + winString;
 		midString = '---|' + midString;
 		lossString = '-  |' + lossString;
 
+		const embed = new Discord.MessageEmbed();
 		const data = [];
 		data.push('```diff');
 		data.push(winString);
 		data.push(midString);
 		data.push(lossString);
+		if (matchesToday && matchesToday < 20) {
+			embed.setDescription(`Matches completed today: ${matchesToday}`);
+			let firstGameLocation = '    ';
+			firstGameLocation += ' '.repeat(20 - matchesToday) + '^';
+			data.push(firstGameLocation);
+		}
 		data.push('```');
 
-		const embed = new Discord.MessageEmbed()
+		embed
 			.setTitle(gamerTag)
 			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/game-history/players/${gamerTag.replace(' ', '%20')}?gameModeFilter=${option}&count=20`)
 			.addFields({ name: 'Last 20 games:', value: data },
