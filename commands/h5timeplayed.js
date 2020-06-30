@@ -72,6 +72,7 @@ module.exports = {
 			data.push(`|Campaign|${campaignDays}|${campaignHours}|${campaignMinutes}|${campaignSeconds}|`);
 			data.push('|--------|----|----|----|----|');
 			data.push(`|Total   |${totalDays}|${totalHours}|${totalMinutes}|${totalSeconds}|`);
+			data.push('|____________________________|');
 			data.push('```');
 
 			const embed = new Discord.MessageEmbed()

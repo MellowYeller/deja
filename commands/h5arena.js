@@ -99,6 +99,7 @@ module.exports = {
 				const killDeath = (stats.TotalKills / Math.max(stats.TotalDeaths, 1)).toFixed(1);
 				table += `${csr.padStart(10, ' ')}|${csrPercent.padStart(5, ' ')}|${stats.TotalGamesCompleted.toString().padStart(5, ' ')}|${winPercent.padStart(6, ' ')}|${killDeath.padStart(3, ' ')}|\n`;
 			});
+			table += '|_______________________________________________________|\n';
 			table += '```';
 			embed.addField('Season Stats:', table);
 			message.channel.send(embed);
