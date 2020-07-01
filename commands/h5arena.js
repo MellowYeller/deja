@@ -19,6 +19,7 @@ module.exports = {
 		// Lifetime deaths
 		// Lifetime favorite weapon
 		const gamertag = sr.PlayerId.Gamertag;
+		const gamertagURL = gamertag.split(' ').join('%20').toString();
 		const rank = sr.SpartanRank;
 		const highestCSRPlaylist = playlists.find(highCSRPlaylist => highCSRPlaylist.id === sr.ArenaStats.HighestCsrPlaylistId);
 		const highestCSRPlaylistName = highestCSRPlaylist.name.trim();
@@ -51,7 +52,7 @@ module.exports = {
 		const lifeSeconds = Math.floor(lifeTimePlayed.getSeconds());
 		const embed = new Discord.MessageEmbed()
 			.setTitle(gamertag)
-			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertag.replace(' ', '%20')}`)
+			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertagURL}`)
 			.setAuthor(rank)
 			.addFields(
 				{
