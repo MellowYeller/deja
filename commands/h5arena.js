@@ -72,8 +72,8 @@ module.exports = {
 			);
 		const playlistStats = sr.ArenaStats.ArenaPlaylistStats;
 		// Create table for current season playlist stats
-		let table = '```';
-		if (playlistStats.length) {
+		if (playlistStats.length > 0) {
+			let table = '```';
 			table += ' _______________________________________________________\n';
 			table += '|Playlist             |Rank      |CSR %|Games|Win % |K/D|\n';
 			table += '|---------------------|----------|-----|-----|------|---|\n';
@@ -103,7 +103,7 @@ module.exports = {
 			table += '|_______________________________________________________|\n';
 			table += '```';
 			embed.addField('Season Stats:', table);
-			message.channel.send(embed);
 		}
+		message.channel.send(embed);
 	},
 };

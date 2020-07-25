@@ -152,6 +152,7 @@ module.exports = {
 			playerName = args.join(' ');
 		}
 		else {
+			// If profile exists, return tag. Otherwise reject.
 			playerName = message.client.profiles.get(message.author.id);
 		}
 		return playerName;
