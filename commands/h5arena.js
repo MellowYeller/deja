@@ -12,31 +12,14 @@ module.exports = {
 	async execute(message, args) {
 		const playerName = halo5.parsePlayerName(message, args);
 		const sr = await halo5.getArenaServiceRecord(playerName);
+		if (sr.ArenaStats.TotalGamesCompleted === 0) {
+			return message.reply('That Gamertag has no games played!');
+		}
 		const playlists = await halo5.getPlaylists();
 		const CSRDesignations = await halo5.getCSRDesignations();
-		// Show:
-		// Highest earned rank, playlist, & season
-		// Lifetime deaths
-		// Lifetime favorite weapon
 		const gamertag = sr.PlayerId.Gamertag;
 		const gamertagURL = gamertag.split(' ').join('%20').toString();
 		const rank = sr.SpartanRank;
-		const highestCSRPlaylist = playlists.find(highCSRPlaylist => highCSRPlaylist.id === sr.ArenaStats.HighestCsrPlaylistId);
-		const highestCSRPlaylistName = highestCSRPlaylist.name.trim();
-		const highestCSRStats = sr.ArenaStats.HighestCsrAttained;
-		let highestCSRRank = '';
-		if (highestCSRStats.DesignationId === 0) {
-			highestCSRRank = 'unranked';
-		}
-		else if (highestCSRStats.Rank) {
-			highestCSRRank = `Champ ${highestCSRStats.Rank}`;
-		}
-		else if(highestCSRStats.Csr) {
-			highestCSRRank = `Onyx ${highestCSRStats.Csr}`;
-		}
-		else {
-			highestCSRRank = `${CSRDesignations[highestCSRStats.DesignationId].name} ${highestCSRStats.Tier}`;
-		}
 		const lifeAccuracy = (sr.ArenaStats.TotalShotsLanded / sr.ArenaStats.TotalShotsFired * 100).toFixed(1);
 		const lifeKills = sr.ArenaStats.TotalKills;
 		const lifeDeaths = sr.ArenaStats.TotalDeaths;
@@ -44,29 +27,46 @@ module.exports = {
 		const lifeDamage = Math.round(sr.ArenaStats.TotalWeaponDamage);
 		const lifeGamesCompleted = sr.ArenaStats.TotalGamesCompleted;
 		const lifeGamesWon = sr.ArenaStats.TotalGamesWon;
-		const lifeWinPercent = (Math.max(1, lifeGamesWon) / lifeGamesCompleted * 100).toFixed(1);
+		const lifeWinPercent = (lifeGamesWon / lifeGamesCompleted * 100).toFixed(1);
 		const lifeTimePlayed = halo5.parseISODuration(sr.ArenaStats.TotalTimePlayed);
 		const lifeDays = Math.floor(lifeTimePlayed.getTime() / 86400000);
 		const lifeHours = lifeTimePlayed.getHours();
 		const lifeMinutes = lifeTimePlayed.getMinutes();
 		const lifeSeconds = Math.floor(lifeTimePlayed.getSeconds());
+		const lifeStatString1 = `Kills: ${lifeKills}\nDeaths: ${lifeDeaths}\nK/D: ${lifeKD}\nAccuracy: ${lifeAccuracy}%\nDamage: ${lifeDamage}`;
+		let lifeStatString2 = `Time Played: ${lifeDays} days, ${lifeHours} hours, ${lifeMinutes} minutes, ${lifeSeconds} seconds\nGames: ${lifeGamesCompleted}\nWon: ${lifeGamesWon}\nWin %: ${lifeWinPercent}`;
+		if (sr.HighestCsrPlaylistId) {
+			const highestCSRPlaylist = playlists.find(highCSRPlaylist => highCSRPlaylist.id === sr.ArenaStats.HighestCsrPlaylistId);
+			const highestCSRPlaylistName = highestCSRPlaylist.name.trim();
+			const highestCSRStats = sr.ArenaStats.HighestCsrAttained;
+			let highestCSRRank = '';
+			if (highestCSRStats.DesignationId === 0) {
+				highestCSRRank = 'unranked';
+			}
+			else if (highestCSRStats.Rank) {
+				highestCSRRank = `Champ ${highestCSRStats.Rank}`;
+			}
+			else if(highestCSRStats.Csr) {
+				highestCSRRank = `Onyx ${highestCSRStats.Csr}`;
+			}
+			else {
+				highestCSRRank = `${CSRDesignations[highestCSRStats.DesignationId].name} ${highestCSRStats.Tier}`;
+			}
+			lifeStatString2 += `Highest CSR: ${highestCSRPlaylistName}, ${highestCSRRank}`;
+		}
 		const embed = new Discord.MessageEmbed()
 			.setTitle(gamertag)
 			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertagURL}`)
 			.setAuthor(rank)
 			.addFields(
 				{
-					name: 'Highest Lifetime CSR:',
-					value: `${highestCSRPlaylistName}, ${highestCSRRank}`,
-				},
-				{
 					name: 'Lifetime Stats:',
-					value: `Kills: ${lifeKills}\nDeaths: ${lifeDeaths}\nK/D: ${lifeKD}\nAccuracy: ${lifeAccuracy}%\nDamage: ${lifeDamage}`,
+					value: lifeStatString1,
 					inline: true,
 				},
 				{
 					name: '...',
-					value: `Time Played: ${lifeDays} days, ${lifeHours} hours, ${lifeMinutes} minutes, ${lifeSeconds} seconds\nGames: ${lifeGamesCompleted}\nWon: ${lifeGamesWon}\nWin %: ${lifeWinPercent}`,
+					value: lifeStatString2,
 					inline: true,
 				},
 			);

@@ -16,18 +16,17 @@ for (const dir of profileDirs) {
 }
 const cooldowns = new Discord.Collection();
 
-const activitiesList = [
-	'Halo 5: Guardians',
-	'with Spartans',
-	'!timeplayed',
-	'!history',
-	'!streak',
-	'!register',
-	'!lastgame',
-	'!rank',
-];
-
 client.once('ready', () => {
+	const activitiesList = [
+		'Halo 5: Guardians',
+		'with Spartans',
+		'!timeplayed',
+		'!history',
+		'!streak',
+		'!register',
+		'!lastgame',
+		'!rank',
+	];
 	setInterval(() => {
 		const index = Math.floor(Math.random() * (activitiesList.length - 1) + 1);
 		client.user.setActivity(activitiesList[index]);

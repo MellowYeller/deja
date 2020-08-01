@@ -1,4 +1,4 @@
-Comment code properly
+Fix history for players with < 20 games played
 Cache game modes and map info
 !undid iridium
 basic mcc stats
