@@ -35,7 +35,7 @@ module.exports = {
 		const lifeSeconds = Math.floor(lifeTimePlayed.getSeconds());
 		const lifeStatString1 = `Kills: ${lifeKills}\nDeaths: ${lifeDeaths}\nK/D: ${lifeKD}\nAccuracy: ${lifeAccuracy}%\nDamage: ${lifeDamage}`;
 		let lifeStatString2 = `Time Played: ${lifeDays} days, ${lifeHours} hours, ${lifeMinutes} minutes, ${lifeSeconds} seconds\nGames: ${lifeGamesCompleted}\nWon: ${lifeGamesWon}\nWin %: ${lifeWinPercent}`;
-		if (sr.HighestCsrPlaylistId) {
+		if (sr.ArenaStats.HighestCsrPlaylistId) {
 			const highestCSRPlaylist = playlists.find(highCSRPlaylist => highCSRPlaylist.id === sr.ArenaStats.HighestCsrPlaylistId);
 			const highestCSRPlaylistName = highestCSRPlaylist.name.trim();
 			const highestCSRStats = sr.ArenaStats.HighestCsrAttained;
@@ -52,7 +52,7 @@ module.exports = {
 			else {
 				highestCSRRank = `${CSRDesignations[highestCSRStats.DesignationId].name} ${highestCSRStats.Tier}`;
 			}
-			lifeStatString2 += `Highest CSR: ${highestCSRPlaylistName}, ${highestCSRRank}`;
+			lifeStatString2 += `\nHighest CSR: ${highestCSRPlaylistName}, ${highestCSRRank}`;
 		}
 		const embed = new Discord.MessageEmbed()
 			.setTitle(gamertag)
