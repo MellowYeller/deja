@@ -91,8 +91,7 @@ module.exports = {
 		data.push(lossString);
 		if (matchesToday && matchesToday < 20) {
 			embed.setDescription(`Matches completed today: ${matchesToday}`);
-			let firstGameLocation = '    ';
-			firstGameLocation += ' '.repeat(20 - matchesToday) + '^';
+			const firstGameLocation = ' '.repeat(midString.length - matchesToday) + '^';
 			data.push(firstGameLocation);
 		}
 		data.push('```');
