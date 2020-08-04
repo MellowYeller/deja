@@ -34,7 +34,7 @@ module.exports = {
 			return message.reply('error retreiving match history.');
 		}
 		if (matchHistory.length === 0) {
-			message.channel.send(`No matches found for ${gamerTag}.`);
+			return message.channel.send(`No matches found for ${gamerTag}.`);
 		}
 		gamerTag = matchHistory[0].Players[0].Player.Gamertag;
 		const results = [];

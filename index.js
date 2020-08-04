@@ -50,7 +50,7 @@ client.on('message', async message => {
 	}
 
 	if (command.args && !args.length && !command.supportsProfiles) {
-		let reply = `You didn't provide any arguments, ${message.author}!`;
+		let reply = `You didn't provide any arguments, ${message.author}! Register using !reg`;
 
 		if (command.usage) {
 			reply += `\nThe proper usage would be: '${prefix}${command.name} ${command.usage}'`;
@@ -85,8 +85,13 @@ client.on('message', async message => {
 		await command.execute(message, args);
 	}
 	catch (error) {
-		console.error(error);
-		message.reply('there was an error trying to execute that command!');
+		if (error.message == 'Invalid Gamertag') {
+			message.reply('No records found for that Gamertag.');
+		}
+		else {
+			console.error(error);
+			message.reply('There was an error trying to execute that command!');
+		}
 	}
 });
 

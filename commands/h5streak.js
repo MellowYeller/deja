@@ -20,6 +20,9 @@ module.exports = {
 			const matchHistory = await halo5.getMatchHistory(playerName);
 			const selectedMode = 1;
 			let matches = matchHistory.filter(match => match.Id.GameMode === selectedMode);
+			if (matches.length === 0) {
+				return message.channel.send(`No games found for ${playerName}.`);
+			}
 			let grabCount = 0;
 			const streakType = matches.shift().Players[0].Result;
 			let lastResult = streakType;
@@ -60,7 +63,7 @@ module.exports = {
 		}
 		catch (err) {
 			if (err.type === 'invalid-json') {
-				message.reply('Sorry, there was an error processing the streak. Is the Gamertag correct?');
+				message.reply(`Sorry, there was an error processing the streak. Is the Gamertag "${playerName}" correct?`);
 			}
 			else { throw err; }
 		}

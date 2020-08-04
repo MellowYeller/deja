@@ -1,7 +1,0 @@
-Fix history for players with < 20 games played
-Cache game modes and map info
-!undid iridium
-basic mcc stats
-Verify Gamertag upon registration
-Verify user has registered when using no args
-Winston for better logging

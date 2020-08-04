@@ -15,6 +15,18 @@ if (fs.existsSync('./cache/halo5/weapons.json')) {
 	cache.weapons = require('./cache/halo5/weapons.json');
 }
 
+async function fetchResult(endPoint) {
+	try {
+		const response = await fetch(endPoint, header);
+		return await response.json();
+	}
+	catch (error) {
+		if (error.type == 'invalid-json') {
+			throw new Error('Invalid Gamertag');
+		}
+		else { throw error; }
+	}
+}
 module.exports = {
 	name: 'halo5',
 	description: 'API for the Halo 5 API.',
@@ -25,9 +37,7 @@ module.exports = {
 			modes = '&modes=' + modes;
 		}
 		const endPoint = `${site}stats/h5/players/${gamerTag}/matches?count=${count}&start=${startIndex}${modes}&include-times=true`;
-		const response = await fetch(endPoint, header);
-		const history = await response.json();
-		if (history.Results === []) throw 'No player data';
+		const history = await fetchResult(endPoint);
 		return history.Results;
 	},
 
@@ -41,36 +51,30 @@ module.exports = {
 		let season = '';
 		if (seasonId) { season = '&' + seasonId; }
 		const endPoint = `${site}stats/h5/servicerecords/arena?players=${gamerTag}${season}`;
-		const reply = await fetch(endPoint, header);
-		const serviceRecords = await reply.json();
+		const serviceRecords = await fetchResult(endPoint);
 		return serviceRecords.Results[0].Result;
 	},
-
 	async getCustomServiceRecord(gamerTag) {
 		const endPoint = `${site}stats/h5/servicerecords/custom?players=${gamerTag}`;
-		const reply = await fetch(endPoint, header);
-		const serviceRecords = await reply.json();
+		const serviceRecords = await fetchResult(endPoint);
 		return serviceRecords.Results[0].Result;
 	},
 
 	async getCustomLocalServiceRecord(gamerTag) {
 		const endPoint = `${site}stats/h5/servicerecords/customlocal?players=${gamerTag}`;
-		const reply = await fetch(endPoint, header);
-		const serviceRecords = await reply.json();
+		const serviceRecords = await fetchResult(endPoint);
 		return serviceRecords.Results[0].Result;
 	},
 
 	async getWarzoneServiceRecord(gamerTag) {
 		const endPoint = `${site}stats/h5/servicerecords/warzone?players=${gamerTag}`;
-		const reply = await fetch(endPoint, header);
-		const serviceRecords = await reply.json();
+		const serviceRecords = await fetchResult(endPoint);
 		return serviceRecords.Results[0].Result;
 	},
 
 	async getCampaignServiceRecord(gamerTag) {
 		const endPoint = `${site}stats/h5/servicerecords/campaign?players=${gamerTag}`;
-		const reply = await fetch(endPoint, header);
-		const serviceRecords = await reply.json();
+		const serviceRecords = await fetchResult(endPoint);
 		return serviceRecords.Results[0].Result;
 	},
 
@@ -78,8 +82,7 @@ module.exports = {
 	async getCSRDesignations() {
 		if (!cache.CSR) {
 			const endPoint = 'https://www.haloapi.com/metadata/h5/metadata/csr-designations';
-			const reply = await fetch(endPoint, header);
-			const CSRDesignations = await reply.json();
+			const CSRDesignations = await fetchResult(endPoint);
 			cache.CSR = CSRDesignations;
 			const path = './cache/halo5';
 			fs.mkdirSync(path, { recursive: true });
@@ -95,8 +98,7 @@ module.exports = {
 	async getPlaylists() {
 		if (!cache.playlists) {
 			const endPoint = 'https://www.haloapi.com/metadata/h5/metadata/playlists';
-			const reply = await fetch(endPoint, header);
-			const playlists = await reply.json();
+			const playlists = await fetchResult(endPoint);
 			cache.playlists = playlists;
 			const path = './cache/halo5';
 			fs.mkdirSync(path, { recursive: true });
@@ -110,8 +112,7 @@ module.exports = {
 	async getWeapons() {
 		if (!cache.weapons) {
 			const endPoint = 'https://www.haloapi.com/metadata/h5/metadata/weapons';
-			const reply = await fetch(endPoint, header);
-			const weapons = await reply.json();
+			const weapons = await fetchResult(endPoint);
 			cache.weapons = weapons;
 			const path = './cache/halo5';
 			fs.mkdirSync(path, { recursive: true });

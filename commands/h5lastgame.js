@@ -20,6 +20,9 @@ module.exports = {
 		const gameJSON = halo5.lastGame(gamerTag);
 
 		gameJSON.then(game => {
+			if (!game) {
+				return message.channel.send(`No games found for ${gamerTag}.`);
+			}
 			const data = [];
 			let mode = '';
 			switch (game.Id.GameMode) {
