@@ -1,7 +1,5 @@
-// TODO:
-// Check if a gamertag is valid before saving
-
 const fs = require('fs');
+const halo5 = require('../halo5.js');
 
 module.exports = {
 	name: 'register',
@@ -13,6 +11,15 @@ module.exports = {
 	async execute(message, args) {
 		const id = message.author.id;
 		const gamertag = args.join(' ');
+		try {
+			await halo5.lastGame(gamertag);
+		}
+		catch (error) {
+			if (error.message == 'Invalid Gamertag') {
+				return message.reply(`${gamertag} is an invalid gamertag. Please verify it is spelled correctly and try again.`);
+			}
+			else { throw error; }
+		}
 		const obj = {
 			id: id,
 			gamertag: gamertag,

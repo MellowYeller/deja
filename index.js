@@ -86,7 +86,7 @@ client.on('message', async message => {
 	}
 	catch (error) {
 		if (error.message == 'Invalid Gamertag') {
-			message.reply('No records found for that Gamertag.');
+			message.reply('Invalid Gamertag.');
 		}
 		else {
 			console.error(error);
