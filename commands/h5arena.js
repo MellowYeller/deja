@@ -13,6 +13,7 @@ module.exports = {
 		const playerName = halo5.parsePlayerName(message, args);
 		const sr = await halo5.getArenaServiceRecord(playerName);
 		if (sr.ArenaStats.TotalGamesCompleted === 0) {
+			console.log(sr);
 			return message.reply(`${playerName} has no games played!`);
 		}
 		const playlists = await halo5.getPlaylists();
@@ -29,12 +30,8 @@ module.exports = {
 		const lifeGamesWon = sr.ArenaStats.TotalGamesWon;
 		const lifeWinPercent = (lifeGamesWon / lifeGamesCompleted * 100).toFixed(1);
 		const lifeTimePlayed = halo5.parseISODuration(sr.ArenaStats.TotalTimePlayed);
-		const lifeDays = Math.floor(lifeTimePlayed.getTime() / 86400000);
-		const lifeHours = lifeTimePlayed.getHours();
-		const lifeMinutes = lifeTimePlayed.getMinutes();
-		const lifeSeconds = Math.floor(lifeTimePlayed.getSeconds());
 		const lifeStatString1 = `Kills: ${lifeKills}\nDeaths: ${lifeDeaths}\nK/D: ${lifeKD}\nAccuracy: ${lifeAccuracy}%\nDamage: ${lifeDamage}`;
-		let lifeStatString2 = `Time Played: ${lifeDays} days, ${lifeHours} hours, ${lifeMinutes} minutes, ${lifeSeconds} seconds\nGames: ${lifeGamesCompleted}\nWon: ${lifeGamesWon}\nWin %: ${lifeWinPercent}`;
+		let lifeStatString2 = `Time Played: ${lifeTimePlayed[0]} days, ${lifeTimePlayed[1]} hours, ${lifeTimePlayed[2]} minutes, ${lifeTimePlayed[3]} seconds\nGames: ${lifeGamesCompleted}\nWon: ${lifeGamesWon}\nWin %: ${lifeWinPercent}`;
 		if (sr.ArenaStats.HighestCsrPlaylistId) {
 			const highestCSRPlaylist = playlists.find(highCSRPlaylist => highCSRPlaylist.id === sr.ArenaStats.HighestCsrPlaylistId);
 			const highestCSRPlaylistName = highestCSRPlaylist.name.trim();

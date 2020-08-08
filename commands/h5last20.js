@@ -26,14 +26,8 @@ module.exports = {
 			gamerTag = message.client.profiles.get(message.author.id);
 		}
 		let matchHistory = [];
-		try {
-			matchHistory = await halo5.getMatchHistory(gamerTag, 20, 0, option);
-		}
-		catch (err) {
-			console.error(err);
-			return message.reply('error retreiving match history.');
-		}
-		if (matchHistory.length === 0) {
+		matchHistory = await halo5.getMatchHistory(gamerTag, 20, 0, option);
+		if (!matchHistory.length) {
 			return message.channel.send(`No matches found for ${gamerTag}.`);
 		}
 		gamerTag = matchHistory[0].Players[0].Player.Gamertag;

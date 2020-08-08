@@ -86,7 +86,7 @@ client.on('message', async message => {
 	}
 	catch (error) {
 		if (error.message == 'Invalid Gamertag') {
-			message.reply('Invalid Gamertag.');
+			message.reply('Gamertag does not exist.');
 		}
 		else {
 			console.error(error);

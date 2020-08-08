@@ -123,28 +123,19 @@ module.exports = {
 		return cache.weapons;
 	},
 
-
 	parseISODuration(string) {
-		if (string === '') { return new Date(0); }
-		const date = new Date(0);
-		let dateArr = [];
-		dateArr[0] = string.split(/[P|T]/).join('');
-		let days = 32;
-		let hours = 0;
-		let minutes = 0;
-		let seconds = 0;
-		dateArr = dateArr[0].split('D');
-		if (dateArr[1]) { days += Number(dateArr.shift()); }
-		dateArr = dateArr[0].split('H');
-		if (dateArr[1]) { hours = Number(dateArr.shift()); }
-		dateArr = dateArr[0].split('M');
-		if (dateArr[1]) { minutes = Number(dateArr.shift()); }
-		seconds = Number(dateArr[0].substring(0, dateArr[0].length - 1));
-		date.setDate(days);
-		date.setHours(hours);
-		date.setMinutes(minutes);
-		date.setSeconds(seconds);
-		return date;
+		const timeArr = [ 0, 0, 0, 0 ];
+		if (string === '') return timeArr;
+		let stringArr = [];
+		stringArr[0] = string.split(/[P|T]/).join('');
+		stringArr = stringArr[0].split('D');
+		if (stringArr[1]) { timeArr[0] = Number(stringArr.shift()); }
+		stringArr = stringArr[0].split('H');
+		if (stringArr[1]) { timeArr[1] = Number(stringArr.shift()); }
+		stringArr = stringArr[0].split('M');
+		if (stringArr[1]) { timeArr[2] = Number(stringArr.shift()); }
+		timeArr[3] = Math.floor(Number(stringArr[0].substring(0, stringArr[0].length - 1)));
+		return timeArr;
 	},
 
 	parsePlayerName(message, args) {
