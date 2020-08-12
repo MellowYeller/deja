@@ -23,9 +23,10 @@ const storeCookies = (array) => {
 	const jar = [];
 	const R_NAME = /^(.+?)=/;
 	const R_VALUE = /=(.+?);/;
-	for (let cookie in array) {
-		cookie = array[cookie];
-		jar.push(`${cookie.match(R_NAME)[1]}=${cookie.match(R_VALUE)[1]};`);
+	for (const cookie in array) {
+		// console.log(cookie);
+		// cookie = array[cookie];
+		// jar.push(`${cookie.match(R_NAME)[1]}=${cookie.match(R_VALUE)[1]};`);
 	}
 	return jar;
 };
@@ -33,7 +34,11 @@ const storeCookies = (array) => {
 module.exports = {
 	async getHistory() {
 		const res = await fetch(oauth);
-		const cookies = storeCookies(res.headers['set-cookie']);
+		console.log(res.headers);
+		console.log(typeof res.headers.get('set-cookie'));
+		const cook = res.headers.get('set-cookie').replace(/', /g, '\',removeMePls');
+		console.log(cook);
+		const cookies = storeCookies(res.headers.get('set-cookie'));
 		const body = await res.text();
 		const ppft = body.match(R_PPFT)[1];
 		const post = body.match(R_POST)[1];
@@ -43,7 +48,6 @@ module.exports = {
 			PPFT: ppft,
 		});
 
-		console.log(`\nppft: ${ppft}\npost: ${post}\ndata: ${data}\n`);
 		const resLogin = await fetch(post, {
 			method: 'POST',
 			body: data,
@@ -53,5 +57,6 @@ module.exports = {
 			},
 			followRedirects: false,
 		});
+		// console.log(resLogin);
 	},
 };
