@@ -13,7 +13,6 @@ module.exports = {
 		const playerName = halo5.parsePlayerName(message, args);
 		const sr = await halo5.getArenaServiceRecord(playerName);
 		if (sr.ArenaStats.TotalGamesCompleted === 0) {
-			console.log(sr);
 			return message.reply(`${playerName} has no games played!`);
 		}
 		const playlists = await halo5.getPlaylists();
