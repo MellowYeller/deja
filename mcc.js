@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
-const { waypointLogin, waypointPassword }= require('./config.json');
-const endpoint = 'https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/';
+const { waypointLogin, waypointPassword } = require('./config.json');
+const site = 'https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/';
 const oauth = 'https://login.live.com/oauth20_authorize.srf?client_id=000000004C0BD2F1' +
 	'&scope=xbox.basic+xbox.offline_access&response_type=code' +
 	'&redirect_uri=https:%2f%2fwww.halowaypoint.com%2fauth%2fcallback&locale=en-us' +
@@ -8,6 +8,12 @@ const oauth = 'https://login.live.com/oauth20_authorize.srf?client_id=000000004C
 // For getting the unique data for session-based logins
 const R_PPFT = /<input type="hidden" name="PPFT" id="i0327" value="(.+?)"\/>/;
 const R_POST = /urlPost:'(.+?)'/;
+let auth = '';
+getAuth()
+	.then(
+		console.log(auth),
+	);
+console.log(`Auth: ${auth}`);
 
 const stringify = obj => {
 	let result = '';
@@ -23,40 +29,80 @@ const storeCookies = (array) => {
 	const jar = [];
 	const R_NAME = /^(.+?)=/;
 	const R_VALUE = /=(.+?);/;
-	for (const cookie in array) {
-		// console.log(cookie);
-		// cookie = array[cookie];
-		// jar.push(`${cookie.match(R_NAME)[1]}=${cookie.match(R_VALUE)[1]};`);
+	for (let cookie in array) {
+		cookie = array[cookie];
+		jar.push(`${cookie.match(R_NAME)[1]}=${cookie.match(R_VALUE)[1]};`);
 	}
 	return jar;
 };
 
-module.exports = {
-	async getHistory() {
-		const res = await fetch(oauth);
-		console.log(res.headers);
-		console.log(typeof res.headers.get('set-cookie'));
-		const cook = res.headers.get('set-cookie').replace(/', /g, '\',removeMePls');
-		console.log(cook);
-		const cookies = storeCookies(res.headers.get('set-cookie'));
-		const body = await res.text();
-		const ppft = body.match(R_PPFT)[1];
-		const post = body.match(R_POST)[1];
-		const data = stringify({
-			login: waypointLogin,
-			passwd: waypointPassword,
-			PPFT: ppft,
-		});
+async function getAuth() {
+	const res = await fetch(oauth);
+	const cook = res.headers.get('set-cookie').split(' HttpOnly, ');
+	const cookies = storeCookies(cook);
+	const body = await res.text();
+	const ppft = body.match(R_PPFT)[1];
+	const post = body.match(R_POST)[1];
+	const data = stringify({
+		login: waypointLogin,
+		passwd: waypointPassword,
+		PPFT: ppft,
+	});
 
-		const resLogin = await fetch(post, {
-			method: 'POST',
-			body: data,
-			headers: {
-				'cookie': cookies.join(''),
-				'content-type': 'application/x-www-form-urlencoded',
-			},
-			followRedirects: false,
+	const resLogin = await fetch(post, {
+		method: 'POST',
+		body: data,
+		headers: {
+			'cookie': cookies.join(''),
+			'content-type': 'application/x-www-form-urlencoded',
+		},
+		redirect: 'manual',
+	});
+	const location = resLogin.headers.get('location');
+
+	const resAuth = await fetch(location, {
+		redirect: 'manual',
+	});
+	// TODO: Check if code == 302
+	// The way these cookies are split damages the 'expires' cookie.
+	// This is fine, because all we need here is the Auth cookie.
+	const authCook = resAuth.headers.get('set-cookie').split(', ');
+	const authCookies = storeCookies(authCook);
+	for (const c of authCookies) {
+		if (c.startsWith('Auth=')) {
+			auth = c;
+		}
+	}
+	console.log(auth);
+}
+
+module.exports = {
+	async getHistory(version, gamertag) {
+		const endpoint = `${site}/${version}/game-history?gamertags=${gamertag}&gameVariant=all&view=DataOnly`;
+		let res = await fetch(endpoint, {
+			headers: { 'cookie': auth },
 		});
-		// console.log(resLogin);
+		console.log(res);
+		try {
+			const json = await res.json();
+			console.log(`\nResult: ${JSON.stringify(json)}\n`);
+			return json;
+		}
+		catch (err) {
+			console.log('Response from endpoint was not valid JSON\n' +
+				'Attempting to grab new OAuth...');
+			await getAuth();
+			res = await fetch(endpoint, {
+				headers: { 'cookie': auth },
+			});
+			try {
+				const json = await res.json();
+				return json;
+			}
+			catch (err) {
+				console.log('Attempt failed.');
+			}
+			console.log(err);
+		}
 	},
 };

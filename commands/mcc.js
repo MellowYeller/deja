@@ -10,6 +10,6 @@ module.exports = {
 	supportsProfiles: true,
 
 	async execute(message, args) {
-		mcc.getHistory();
+		mcc.getHistory('windows', 'mellow yeller');
 	},
 };
