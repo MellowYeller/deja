@@ -9,11 +9,9 @@ const oauth = 'https://login.live.com/oauth20_authorize.srf?client_id=000000004C
 const R_PPFT = /<input type="hidden" name="PPFT" id="i0327" value="(.+?)"\/>/;
 const R_POST = /urlPost:'(.+?)'/;
 let auth = '';
-getAuth()
-	.then(
-		console.log(auth),
-	);
-console.log(`Auth: ${auth}`);
+getAuth().then(() => {
+	console.log('Aquired MCC OAuth');
+});
 
 const stringify = obj => {
 	let result = '';
@@ -73,36 +71,39 @@ async function getAuth() {
 			auth = c;
 		}
 	}
-	console.log(auth);
+	return auth;
+}
+
+async function fetchResult(endpoint) {
+	let res = await fetch(endpoint, {
+		headers: { 'cookie': auth },
+	});
+	try {
+		const json = await res.json();
+		return json;
+	}
+	catch (err) {
+		console.log('Response from endpoint was not valid JSON\n' +
+			'Attempting to grab new OAuth...');
+		await getAuth();
+		res = await fetch(endpoint, {
+			headers: { 'cookie': auth },
+		});
+		try {
+			const json = await res.json();
+			console.log('Attempt successful.');
+			return json;
+		}
+		catch (err) {
+			console.log('Attempt failed.');
+			throw err;
+		}
+	}
 }
 
 module.exports = {
 	async getHistory(version, gamertag) {
-		const endpoint = `${site}/${version}/game-history?gamertags=${gamertag}&gameVariant=all&view=DataOnly`;
-		let res = await fetch(endpoint, {
-			headers: { 'cookie': auth },
-		});
-		console.log(res);
-		try {
-			const json = await res.json();
-			console.log(`\nResult: ${JSON.stringify(json)}\n`);
-			return json;
-		}
-		catch (err) {
-			console.log('Response from endpoint was not valid JSON\n' +
-				'Attempting to grab new OAuth...');
-			await getAuth();
-			res = await fetch(endpoint, {
-				headers: { 'cookie': auth },
-			});
-			try {
-				const json = await res.json();
-				return json;
-			}
-			catch (err) {
-				console.log('Attempt failed.');
-			}
-			console.log(err);
-		}
+		const endpoint = `${site}${version}/game-history?gamertags=${gamertag}&gameVariant=all&view=DataOnly`;
+		return await fetchResult(endpoint);
 	},
 };
