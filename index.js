@@ -26,6 +26,7 @@ client.once('ready', () => {
 		'!register',
 		'!lastgame',
 		'!rank',
+		'!mcc',
 	];
 	setInterval(() => {
 		const index = Math.floor(Math.random() * (activitiesList.length - 1) + 1);
