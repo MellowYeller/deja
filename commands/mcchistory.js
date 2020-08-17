@@ -4,19 +4,19 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'mcchistory',
 	description: 'Test command for MCC',
-	aliases: ['mcc'],
+	aliases: ['mcc', 'mcch'],
 	usage: '[-VERSION] [GAMERTAG]',
 	args: true,
 	supportsProfiles: true,
 
 	async execute(message, args) {
 		let gamerTag = '';
-		let version = '';
+		let version = 'xbox-one';
 		if (args.length) {
 			if (args[0].startsWith('-')) {
 				version = args.shift().substring(1).toLowerCase();
 				if (version !== 'xbox-one' && version !== 'xbox' && version !== 'pc' && version !== 'windows') {
-					return message.reply('Invalid option. Use either \'-xbox\' or \'-pc\'.');
+					return message.reply('Invalid option. Use either \'-xbox\' or \'-pc\'. No option assumes Xbox.');
 				}
 				switch (version) {
 				case 'xbox':
@@ -27,9 +27,6 @@ module.exports = {
 					break;
 				}
 			}
-			else {
-				return message.reply('Please select version. Use either \'-xbox\' or \'-pc\'.');
-			}
 		}
 		if (args.length) {
 			gamerTag = args.join(' ');
@@ -37,9 +34,11 @@ module.exports = {
 		else {
 			gamerTag = message.client.profiles.get(message.author.id);
 		}
-		const res = await mcc.getHistory(version, gamerTag);
-		gamerTag = res[0].Gamertag;
-		const games = res[0].Stats;
+		const prom1 = mcc.getHistory(version, gamerTag);
+		const prom2 = mcc.getHistory(version, gamerTag, 2);
+		const [ res1, res2 ] = await Promise.all([ prom1, prom2 ]);
+		gamerTag = res1[0].Gamertag;
+		const games = res1[0].Stats.concat(res2[0].Stats);
 		let gamesToday = 0;
 		const today = new Date();
 		today.setMilliseconds(0);
@@ -78,7 +77,7 @@ module.exports = {
 		data.push(winString);
 		data.push(midString);
 		data.push(lossString);
-		if (gamesToday && gamesToday < 10) {
+		if (gamesToday && gamesToday < 20) {
 			embed.setDescription(`Matches completed today: ${gamesToday}`);
 			const firstGameLocation = ' '.repeat(midString.length - gamesToday) + '^';
 			data.push(firstGameLocation);
@@ -88,7 +87,7 @@ module.exports = {
 		embed
 			.setTitle(gamerTag)
 			.setURL(`https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/game-history?gamertags=${gamerTag.replace(' ', '%20')}`)
-			.addFields({ name: 'Last 10 games:', value: data },
+			.addFields({ name: 'Last 20 MCC games:', value: data },
 			);
 		message.channel.send(embed);
 	},

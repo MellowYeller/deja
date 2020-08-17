@@ -111,9 +111,9 @@ async function fetchResult(endpoint) {
 }
 
 module.exports = {
-	// Use &page=2 to fetch additional games. Up to 100.
-	async getHistory(version, gamertag) {
-		const endpoint = `${site}${version}/game-history?gamertags=${gamertag}&gameVariant=all&view=DataOnly`;
+	// Use &page=2 to fetch next 10 games. Up to 100.
+	async getHistory(version, gamertag, page = 1) {
+		const endpoint = `${site}${version}/game-history?gamertags=${gamertag}&page=${page}&gameVariant=all&view=DataOnly`;
 		return await fetchResult(endpoint);
 	},
 };
