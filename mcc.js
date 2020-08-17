@@ -36,6 +36,9 @@ const storeCookies = (array) => {
 
 async function getAuth() {
 	const res = await fetch(oauth);
+	if (res.status != 200) {
+		throw new Error('OAuth did not return with 200 status code.');
+	}
 	const cook = res.headers.get('set-cookie').split(' HttpOnly, ');
 	const cookies = storeCookies(cook);
 	const body = await res.text();
@@ -56,12 +59,17 @@ async function getAuth() {
 		},
 		redirect: 'manual',
 	});
+	if (resLogin.status != 302) {
+		throw new Error('Login did not return with 302 status code.');
+	}
 	const location = resLogin.headers.get('location');
 
 	const resAuth = await fetch(location, {
 		redirect: 'manual',
 	});
-	// TODO: Check if code == 302
+	if (resAuth.status != 302) {
+		throw new Error('Auth retrieval did nto return with a 302 status code.');
+	}
 	// The way these cookies are split damages the 'expires' cookie.
 	// This is fine, because all we need here is the Auth cookie.
 	const authCook = resAuth.headers.get('set-cookie').split(', ');
@@ -86,11 +94,11 @@ async function fetchResult(endpoint) {
 	catch (err) {
 		console.log('Response from endpoint was not valid JSON\n' +
 			'Attempting to grab new OAuth...');
-		await getAuth();
-		res = await fetch(endpoint, {
-			headers: { 'cookie': auth },
-		});
 		try {
+			await getAuth();
+			res = await fetch(endpoint, {
+				headers: { 'cookie': auth },
+			});
 			const json = await res.json();
 			console.log('Attempt successful.');
 			return json;
