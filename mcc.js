@@ -74,6 +74,7 @@ async function getAuth() {
 	return auth;
 }
 
+// the json we return might contain a single array. consider grabbing json[0]
 async function fetchResult(endpoint) {
 	let res = await fetch(endpoint, {
 		headers: { 'cookie': auth },
@@ -102,6 +103,7 @@ async function fetchResult(endpoint) {
 }
 
 module.exports = {
+	// Use &page=2 to fetch additional games. Up to 100.
 	async getHistory(version, gamertag) {
 		const endpoint = `${site}${version}/game-history?gamertags=${gamertag}&gameVariant=all&view=DataOnly`;
 		return await fetchResult(endpoint);

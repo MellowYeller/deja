@@ -38,6 +38,58 @@ module.exports = {
 			gamerTag = message.client.profiles.get(message.author.id);
 		}
 		const res = await mcc.getHistory(version, gamerTag);
-		console.log(JSON.stringify(res));
+		gamerTag = res[0].Gamertag;
+		const games = res[0].Stats;
+		let gamesToday = 0;
+		const today = new Date();
+		today.setMilliseconds(0);
+		today.setSeconds(0);
+		today.setMinutes(0);
+		today.setHours(0);
+		let winString = '';
+		let midString = '';
+		let lossString = '';
+		for (const game of games) {
+			const gameDay = new Date(game.DateTime);
+			gameDay.setMilliseconds(0);
+			gameDay.setSeconds(0);
+			gameDay.setMinutes(0);
+			gameDay.setHours(0);
+			if (today.getTime() === gameDay.getTime()) gamesToday++;
+			const result = game.Won;
+			if (result) {
+				winString = 'W' + winString;
+				midString = '-' + midString;
+				lossString = ' ' + lossString;
+			}
+			else {
+				winString = ' ' + winString;
+				midString = '-' + midString;
+				lossString = 'L' + lossString;
+			}
+		}
+		winString = '+  |' + winString;
+		midString = '---|' + midString;
+		lossString = '-  |' + lossString;
+
+		const embed = new Discord.MessageEmbed();
+		const data = [];
+		data.push('```diff');
+		data.push(winString);
+		data.push(midString);
+		data.push(lossString);
+		if (gamesToday && gamesToday < 10) {
+			embed.setDescription(`Matches completed today: ${gamesToday}`);
+			const firstGameLocation = ' '.repeat(midString.length - gamesToday) + '^';
+			data.push(firstGameLocation);
+		}
+		data.push('```');
+
+		embed
+			.setTitle(gamerTag)
+			.setURL(`https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/game-history?gamertags=${gamerTag.replace(' ', '%20')}`)
+			.addFields({ name: 'Last 10 games:', value: data },
+			);
+		message.channel.send(embed);
 	},
 };
