@@ -116,4 +116,9 @@ module.exports = {
 		const endpoint = `${site}${version}/game-history?gamertags=${gamertag}&page=${page}&gameVariant=all&view=DataOnly`;
 		return await fetchResult(endpoint);
 	},
+
+	async getRanks(version, gamertag) {
+		const endpoint = `${site}${version}/skill-ranks?gamertags=${gamertag}&view=dataonly`;
+		return await fetchResult(endpoint);
+	},
 };
