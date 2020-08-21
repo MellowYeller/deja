@@ -15,7 +15,7 @@ module.exports = {
 			if (args[0].startsWith('-')) {
 				option = args.shift().substring(1).toLowerCase();
 				if (option !== 'arena' && option !== 'warzone' && option !== 'custom' && option !== 'campaign') {
-					return message.reply('Invalid option. Use either arena, warzone, custom, or campaign. Combine bydelimiting by , (no spaces).');
+					return message.reply('Invalid option. Use either arena, warzone, custom, or campaign.');
 				}
 			}
 		}
