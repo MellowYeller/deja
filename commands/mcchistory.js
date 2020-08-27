@@ -39,6 +39,9 @@ module.exports = {
 		const [ res1, res2 ] = await Promise.all([ prom1, prom2 ]);
 		gamerTag = res1[0].Gamertag;
 		const games = res1[0].Stats.concat(res2[0].Stats);
+		if (games.length == 0) {
+			return message.reply(`${gamerTag} has no games played in MCC.`);
+		}
 		let gamesToday = 0;
 		const today = new Date();
 		today.setMilliseconds(0);
