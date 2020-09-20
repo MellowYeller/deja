@@ -43,7 +43,8 @@ module.exports = {
 			mode = 'Error';
 			break;
 		}
-		const linkToGame = `https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/mode/${mode}/matches/${game.Id.MatchId}/players/${gamerTag.replace(' ', '%20')}`;
+		const gamertagURL = gamerTag.split(' ').join('%20');
+		const linkToGame = `https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/mode/${mode}/matches/${game.Id.MatchId}/players/${gamertagURL}`;
 		const dateCompleted = new Date(game.MatchCompletedDate.ISO8601Date).toDateString();
 		const playerName = game.Players[0].Player.Gamertag;
 		const kills = game.Players[0].TotalKills;

@@ -77,6 +77,7 @@ module.exports = {
 		midString = '---|' + midString;
 		lossString = '-  |' + lossString;
 
+		const gamertagURL = gamerTag.split(' ').join('%20');
 		const embed = new Discord.MessageEmbed();
 		const data = [];
 		data.push('```diff');
@@ -92,7 +93,7 @@ module.exports = {
 
 		embed
 			.setTitle(gamerTag)
-			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/game-history/players/${gamerTag.replace(' ', '%20')}?gameModeFilter=${option}&count=20`)
+			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/game-history/players/${gamertagURL}?gameModeFilter=${option}&count=20`)
 			.addFields({ name: 'Last 20 games:', value: data },
 			)
 			.setFooter(`Mode: ${option ? option.toUpperCase() : 'ALL'}`);

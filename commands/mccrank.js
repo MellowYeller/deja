@@ -47,9 +47,10 @@ module.exports = {
 		}
 		data.push('|______________________________|');
 		data.push('```');
+		const gamertagURL = gamertag.split(' ').join('%20');
 		const embed = new Discord.MessageEmbed()
 			.setTitle(gamertag)
-			.setURL(`https://halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/skill-ranks?gamertags=${gamertag.replace(' ', '%20')}`)
+			.setURL(`https://halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/skill-ranks?gamertags=${gamertagURL}`)
 			.addFields(
 				{ name: `MCC ${(version == 'windows') ? 'PC' : 'Xbox'} Ranks`, value: data },
 			);

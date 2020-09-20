@@ -74,6 +74,7 @@ module.exports = {
 		midString = '---|' + midString;
 		lossString = '-  |' + lossString;
 
+		const gamertagURL = gamerTag.split(' ').join('%20');
 		const embed = new Discord.MessageEmbed();
 		const data = [];
 		data.push('```diff');
@@ -89,7 +90,7 @@ module.exports = {
 
 		embed
 			.setTitle(gamerTag)
-			.setURL(`https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/game-history?gamertags=${gamerTag.replace(' ', '%20')}`)
+			.setURL(`https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/game-history?gamertags=${gamertagURL}`)
 			.addFields({ name: 'Last 20 MCC games:', value: data },
 			);
 		message.channel.send(embed);

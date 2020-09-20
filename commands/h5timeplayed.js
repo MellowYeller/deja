@@ -67,10 +67,11 @@ module.exports = {
 		data.push('|____________________________|');
 		data.push('```');
 
+		const gamertagURL = gamertag.split(' ').join('%20');
 		const embed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
 			.setTitle(gamertag)
-			.setURL(`https://halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertag.replace(' ', '%20')}`)
+			.setURL(`https://halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertagURL}`)
 			.addFields(
 				{ name: 'Time Played', value: data },
 			);
