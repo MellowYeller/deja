@@ -1,6 +1,5 @@
 node_modules/
-cache/users/*
-cache/halo5/*
+cache/
 commands/test.js
 config.json
 package-lock.json

@@ -11,13 +11,9 @@ module.exports = {
 	devOnly: false,
 
 	async execute(message, args) {
-		let playerName = '';
-		if (args.length) {
-			playerName = args.join(' ');
-		}
-		else {
-			playerName = message.client.profiles.get(message.author.id);
-		}
+		const playerName = parsePlayerName(message, args);
+
+		// Grab all game modes data
 		const arenaPromise = halo5.getArenaServiceRecord(playerName);
 		const customPromise = halo5.getCustomServiceRecord(playerName);
 		const warzonePromise = halo5.getWarzoneServiceRecord(playerName);
@@ -25,9 +21,11 @@ module.exports = {
 
 		const [ arenaServiceRecord, customServiceRecord, warzoneServiceRecord, campaignServiceRecord ] = await Promise.all([ arenaPromise, customPromise, warzonePromise, campaignPromise ]);
 
+		// Use gamertag from server for proper capitilization
 		const gamertag = arenaServiceRecord.PlayerId.Gamertag;
 		if (gamertag == null) throw new Error('Invalid Gamertag');
 
+		// Get ISO times for each game mode
 		const arenaISODuration = arenaServiceRecord.ArenaStats.TotalTimePlayed;
 		const customISODuration = customServiceRecord.CustomStats.TotalTimePlayed;
 		const warzoneISODuration = warzoneServiceRecord.WarzoneStat.TotalTimePlayed;
@@ -37,44 +35,69 @@ module.exports = {
 		const customTime = halo5.parseISODuration(customISODuration);
 		const warzoneTime = halo5.parseISODuration(warzoneISODuration);
 		const campaignTime = halo5.parseISODuration(campaignISODuration);
-
 		const times = [ arenaTime, warzoneTime, customTime, campaignTime, [] ];
+
+		// Build total time from each gamemode
+		calcTotalTime(times);
 		const modes = [ 'Arena', 'Warzone', 'Custom', 'Campaign', 'Total' ];
-		// Calc total times
-		for (let i = 0; i < 4; i++) {
-			times[4][i] = times[0][i] + times[1][i] + times[2][i] + times[3][i];
-		}
 
-		// Rebalance time overflow in total time
-		times[4][2] += Math.floor(times[4][3] / 60);
-		times[4][3] = times[4][3] % 60;
-		times[4][1] += Math.floor(times[4][2] / 60);
-		times[4][2] = times[4][2] % 60;
-		times[4][0] += Math.floor(times[4][2] / 24);
-		times[4][1] = times[4][1] % 24;
-
-		const data = [];
-		data.push('```');
-		data.push(' ____________________________');
-		data.push('|Mode    |Days|Hour|Mins|Secs|');
-		data.push('|--------|----|----|----|----|');
-		for (let i = 0; i < 5; i++) {
-			let str = '';
-			if (i === 4) str += '|--------|----|----|----|----|\n';
-			str += `|${modes[i].toString().padEnd(8, ' ')}|${times[i][0].toString().padStart(4, ' ')}|${times[i][1].toString().padStart(4, ' ')}|${times[i][2].toString().padStart(4, ' ')}|${times[i][3].toString().padStart(4, ' ')}|`;
-			data.push(str);
-		}
-		data.push('|____________________________|');
-		data.push('```');
-
-		const gamertagURL = gamertag.split(' ').join('%20');
-		const embed = new Discord.MessageEmbed()
-			.setColor('#0099ff')
-			.setTitle(gamertag)
-			.setURL(`https://halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertagURL}`)
-			.addFields(
-				{ name: 'Time Played', value: data },
-			);
+		const embed = buildEmbed(gamertag, times, modes);
 		message.channel.send(embed);
 	},
+};
+
+const parsePlayerName = (message, args) => {
+	let playerName = '';
+	if (args.length) {
+		playerName = args.join(' ');
+	}
+	else {
+		playerName = message.client.profiles.get(message.author.id);
+	}
+	return playerName;
+};
+const calcTotalTime = (times) => {
+	// Add each game mode days, hours, minutes, and seconds into total times[4]
+	for (let i = 0; i < 4; i++) {
+		times[4][i] = times[0][i] + times[1][i] + times[2][i] + times[3][i];
+	}
+
+	// After adding, times are overflowed
+	// Rebalance time overflow in total time
+	times[4][2] += Math.floor(times[4][3] / 60);
+	times[4][3] = times[4][3] % 60;
+	times[4][1] += Math.floor(times[4][2] / 60);
+	times[4][2] = times[4][2] % 60;
+	times[4][0] += Math.floor(times[4][2] / 24);
+	times[4][1] = times[4][1] % 24;
+	return times;
+};
+const buildEmbed = (gamertag, times, modes) => {
+	const data = [];
+	data.push('```');
+	// Build table
+	data.push(' ____________________________');
+	data.push('|Mode    |Days|Hour|Mins|Secs|');
+	data.push('|--------|----|----|----|----|');
+	for (let i = 0; i < 5; i++) {
+		let str = '';
+		if (i === 4) str += '|--------|----|----|----|----|\n';
+		str += `|${modes[i].toString().padEnd(8, ' ')}|${times[i][0].toString().padStart(4, ' ')}|${times[i][1].toString().padStart(4, ' ')}|${times[i][2].toString().padStart(4, ' ')}|${times[i][3].toString().padStart(4, ' ')}|`;
+		data.push(str);
+	}
+	data.push('|____________________________|');
+	data.push('```');
+
+	// URL friendly gamertag
+	const gamertagURL = gamertag.split(' ').join('%20');
+
+	// Embed with link to gamertag records
+	const embed = new Discord.MessageEmbed()
+		.setColor('#0099ff')
+		.setTitle(gamertag)
+		.setURL(`https://halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/service-records/players/${gamertagURL}`)
+		.addFields(
+			{ name: 'Time Played', value: data },
+		);
+	return embed;
 };
