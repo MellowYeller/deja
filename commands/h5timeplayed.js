@@ -7,11 +7,10 @@ module.exports = {
 	usage: '<Gamertag>',
 	aliases: [ 'timeplayed', 'tp' ],
 	args: true,
-	supportsProfiles: true,
+	nameRequired: true,
 	devOnly: false,
 
-	async execute(message, args) {
-		const playerName = parsePlayerName(message, args);
+	async execute(message, args, playerName) {
 
 		// Grab all game modes data
 		const arenaPromise = halo5.getArenaServiceRecord(playerName);
@@ -46,16 +45,6 @@ module.exports = {
 	},
 };
 
-const parsePlayerName = (message, args) => {
-	let playerName = '';
-	if (args.length) {
-		playerName = args.join(' ');
-	}
-	else {
-		playerName = message.client.profiles.get(message.author.id);
-	}
-	return playerName;
-};
 const calcTotalTime = (times) => {
 	// Add each game mode days, hours, minutes, and seconds into total times[4]
 	for (let i = 0; i < 4; i++) {

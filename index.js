@@ -39,19 +39,31 @@ client.once('ready', () => {
 client.on('message', async message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-	const args = message.content.slice(prefix.length).split(/ +/);
-	const commandName = args.shift().toLowerCase();
+	// Separate command, args, and playerName
+	const allArgs = message.content.slice(prefix.length).split(/ +/);
+	const commandName = allArgs.shift().toLowerCase();
+	const args = [];
+	let playerName = [];
+	for (const arg of allArgs) {
+		if (arg.startsWith('-')) {
+			args.push(arg);
+		}
+		else {
+			playerName.push(arg);
+		}
+	}
+	playerName = playerName.join(' ');
+	if (!playerName) {
+		playerName = message.client.profiles.get(message.author.id);
+	}
 
+	// Check if the command exists
 	const command = client.commands.get(commandName)
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if (!command) return;
 
-	if (command.guildOnly && message.channel.type !== 'text') {
-		return message.reply('I can\'t execute that command inside DMs!');
-	}
-
-	if (command.args && !args.length && !command.supportsProfiles) {
-		let reply = `You didn't provide any arguments, ${message.author}! Register using !reg`;
+	if (command.nameRequired && (!playerName)) {
+		let reply = `You didn't provide your gamertag, ${message.author}! Try again with your gamertag at the end of the command, or register using !reg.`;
 
 		if (command.usage) {
 			reply += `\nThe proper usage would be: '${prefix}${command.name} ${command.usage}'`;
@@ -83,7 +95,7 @@ client.on('message', async message => {
 	timestamps.set(message.author.id, now);
 	setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 	try {
-		await command.execute(message, args);
+		await command.execute(message, args, playerName);
 	}
 	catch (error) {
 		if (error.message == 'Invalid Gamertag') {
