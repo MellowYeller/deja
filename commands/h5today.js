@@ -6,7 +6,7 @@ module.exports = {
 	aliases: [ 'today', 't', 'session', 's' ],
 	description: 'Shows the count of games played on the current day.',
 	usage: '[GAMERTAG]',
-	supportsProfiles: true,
+	nameRequired: true,
 
 	// Win/Loss today?
 	// Kill/death today?

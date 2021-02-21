@@ -5,7 +5,7 @@ module.exports = {
 	description: 'Returns the number of consecutive arena wins or losses for a player.',
 	usage: '<Gamer Tag>',
 	args: true,
-	supportsProfiles: true,
+	nameRequired: true,
 	aliases: [ 'streak', 's' ],
 
 	async execute(message, args, gamertag) {

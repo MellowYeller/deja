@@ -7,6 +7,7 @@ module.exports = {
 	aliases: ['lastgame', 'lg'],
 	usage: '<Gamer Tag>',
 	args: true,
+	nameRequired: true,
 	supportsProfiles: true,
 
 	async execute(message, args, gamertag) {

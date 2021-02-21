@@ -7,6 +7,7 @@ module.exports = {
 	aliases: [ 'reg' ],
 	usage: '<Gamertag>',
 	args: true,
+	nameRequired: true,
 
 	async execute(message, args, gamertag) {
 		const id = message.author.id;

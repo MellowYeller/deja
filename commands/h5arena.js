@@ -6,6 +6,7 @@ module.exports = {
 	description: 'Service record for Arena playlists.',
 	aliases: [ 'sr', 'arena', 'servicerecord', 'rank' ],
 	usage: '<Gamertag>',
+	nameRequired: true,
 	args: true,
 	supportsProfiles: true,
 

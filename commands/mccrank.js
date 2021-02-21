@@ -7,7 +7,7 @@ module.exports = {
 	aliases: ['mccranks', 'mccsr', 'mccr'],
 	usage: '[-VERSION] [GAMERTAG]',
 	args: true,
-	supportsProfiles: true,
+	nameRequired: true,
 
 	async execute(message, args, gamertag) {
 		let version = 'xbox-one';

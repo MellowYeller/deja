@@ -6,7 +6,7 @@ module.exports = {
 	aliases: [ 'last20', 'history', 'h', '20' ],
 	description: 'Displays the win/loss ratio of the last 20 games.',
 	usage: '[-OPTION] [GAMERTAG]',
-	supportsProfiles: true,
+	nameRequired: true,
 
 	async execute(message, args, gamertag) {
 		let option = '';
