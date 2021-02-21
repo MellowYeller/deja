@@ -46,7 +46,7 @@ client.on('message', async message => {
 	let playerName = [];
 	for (const arg of allArgs) {
 		if (arg.startsWith('-')) {
-			args.push(arg);
+			args.push(arg.substring(1));
 		}
 		else {
 			playerName.push(arg);

@@ -4,36 +4,13 @@ const Discord = require('discord.js');
 module.exports = {
 	name: 'mccrank',
 	description: 'Test command for MCC',
-	aliases: ['mccranks', 'mccsr'],
+	aliases: ['mccranks', 'mccsr', 'mccr'],
 	usage: '[-VERSION] [GAMERTAG]',
 	args: true,
 	supportsProfiles: true,
 
-	async execute(message, args) {
-		let gamertag = '';
-		let version = 'windows';
-		if (args.length) {
-			if (args[0].startsWith('-')) {
-				version = args.shift().substring(1).toLowerCase();
-				if (version !== 'xbox-one' && version !== 'xbox' && version !== 'pc' && version !== 'windows') {
-					return message.reply('Invalid option. Use either \'-xbox\' or \'-pc\'. No option assumes Windows.');
-				}
-				switch (version) {
-				case 'xbox':
-					version = 'xbox-one';
-					break;
-				case 'pc':
-					version = 'windows';
-					break;
-				}
-			}
-		}
-		if (args.length) {
-			gamertag = args.join(' ');
-		}
-		else {
-			gamertag = message.client.profiles.get(message.author.id);
-		}
+	async execute(message, args, gamertag) {
+		let version = 'xbox-one';
 		const json = await mcc.getRanks(version, gamertag);
 		const ranks = Object.keys(json);
 		gamertag = json[ranks[0]][0].Gamertag;

@@ -9,17 +9,10 @@ module.exports = {
 	args: true,
 	supportsProfiles: true,
 
-	async execute(message, args) {
-		let gamerTag = '';
-		if (args.length) {
-			gamerTag = args.join(' ');
-		}
-		else {
-			gamerTag = message.client.profiles.get(message.author.id);
-		}
-		const game = await halo5.lastGame(gamerTag);
+	async execute(message, args, gamertag) {
+		const game = await halo5.lastGame(gamertag);
 		if (!game) {
-			return message.channel.send(`No games found for ${gamerTag}.`);
+			return message.channel.send(`No games found for ${gamertag}.`);
 		}
 		const data = [];
 		let mode = '';
@@ -43,7 +36,7 @@ module.exports = {
 			mode = 'Error';
 			break;
 		}
-		const gamertagURL = gamerTag.split(' ').join('%20');
+		const gamertagURL = gamertag.split(' ').join('%20');
 		const linkToGame = `https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/mode/${mode}/matches/${game.Id.MatchId}/players/${gamertagURL}`;
 		const dateCompleted = new Date(game.MatchCompletedDate.ISO8601Date).toDateString();
 		const playerName = game.Players[0].Player.Gamertag;

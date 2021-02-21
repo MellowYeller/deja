@@ -11,22 +11,13 @@ module.exports = {
 	// Win/Loss today?
 	// Kill/death today?
 	// How many of each gametype?
-	async execute(message, args) {
-		let gamertag = '';
+	async execute(message, args, gamertag) {
 		let option = '';
 		if (args.length) {
-			if (args[0].startsWith('-')) {
-				option = args.shift().substring(1).toLowerCase();
-				if (option !== 'arena' && option !== 'warzone' && option !== 'custom' && option !== 'campaign') {
-					return message.reply('Invalid option. Use either arena, warzone, custom, or campaign.');
-				}
+			option = args.shift().substring(1).toLowerCase();
+			if (option !== 'arena' && option !== 'warzone' && option !== 'custom' && option !== 'campaign') {
+				return message.reply('Invalid option. Use either arena, warzone, custom, or campaign.');
 			}
-		}
-		if (args.length) {
-			gamertag = args.join(' ');
-		}
-		else {
-			gamertag = message.client.profiles.get(message.author.id);
 		}
 		let matchesToday = 0;
 		const today = new Date(Date.now());

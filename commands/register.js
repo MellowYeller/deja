@@ -8,9 +8,9 @@ module.exports = {
 	usage: '<Gamertag>',
 	args: true,
 
-	async execute(message, args) {
+	async execute(message, args, gamertag) {
 		const id = message.author.id;
-		const gamertag = args.join(' ');
+		console.log(gamertag);
 		try {
 			await halo5.lastGame(gamertag);
 		}

@@ -9,38 +9,15 @@ module.exports = {
 	args: true,
 	supportsProfiles: true,
 
-	async execute(message, args) {
-		let gamerTag = '';
+	async execute(message, args, gamertag) {
 		let version = 'xbox-one';
-		if (args.length) {
-			if (args[0].startsWith('-')) {
-				version = args.shift().substring(1).toLowerCase();
-				if (version !== 'xbox-one' && version !== 'xbox' && version !== 'pc' && version !== 'windows') {
-					return message.reply('Invalid option. Use either \'-xbox\' or \'-pc\'. No option assumes Xbox.');
-				}
-				switch (version) {
-				case 'xbox':
-					version = 'xbox-one';
-					break;
-				case 'pc':
-					version = 'windows';
-					break;
-				}
-			}
-		}
-		if (args.length) {
-			gamerTag = args.join(' ');
-		}
-		else {
-			gamerTag = message.client.profiles.get(message.author.id);
-		}
-		const prom1 = mcc.getHistory(version, gamerTag);
-		const prom2 = mcc.getHistory(version, gamerTag, 2);
+		const prom1 = mcc.getHistory(version, gamertag);
+		const prom2 = mcc.getHistory(version, gamertag, 2);
 		const [ res1, res2 ] = await Promise.all([ prom1, prom2 ]);
-		gamerTag = res1[0].Gamertag;
+		gamertag = res1[0].Gamertag;
 		const games = res1[0].Stats.concat(res2[0].Stats);
 		if (games.length == 0) {
-			return message.reply(`${gamerTag} has no games played in MCC.`);
+			return message.reply(`${gamertag} has no games played in MCC.`);
 		}
 		let gamesToday = 0;
 		const today = new Date();
@@ -74,7 +51,7 @@ module.exports = {
 		midString = '---|' + midString;
 		lossString = '-  |' + lossString;
 
-		const gamertagURL = gamerTag.split(' ').join('%20');
+		const gamertagURL = gamertag.split(' ').join('%20');
 		const embed = new Discord.MessageEmbed();
 		const data = [];
 		data.push('```diff');
@@ -89,7 +66,7 @@ module.exports = {
 		data.push('```');
 
 		embed
-			.setTitle(gamerTag)
+			.setTitle(gamertag)
 			.setURL(`https://www.halowaypoint.com/en-us/games/halo-the-master-chief-collection/${version}/game-history?gamertags=${gamertagURL}`)
 			.addFields({ name: 'Last 20 MCC games:', value: data },
 			);

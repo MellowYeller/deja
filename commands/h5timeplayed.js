@@ -10,18 +10,18 @@ module.exports = {
 	nameRequired: true,
 	devOnly: false,
 
-	async execute(message, args, playerName) {
+	async execute(message, args, gamertag) {
 
 		// Grab all game modes data
-		const arenaPromise = halo5.getArenaServiceRecord(playerName);
-		const customPromise = halo5.getCustomServiceRecord(playerName);
-		const warzonePromise = halo5.getWarzoneServiceRecord(playerName);
-		const campaignPromise = halo5.getCampaignServiceRecord(playerName);
+		const arenaPromise = halo5.getArenaServiceRecord(gamertag);
+		const customPromise = halo5.getCustomServiceRecord(gamertag);
+		const warzonePromise = halo5.getWarzoneServiceRecord(gamertag);
+		const campaignPromise = halo5.getCampaignServiceRecord(gamertag);
 
 		const [ arenaServiceRecord, customServiceRecord, warzoneServiceRecord, campaignServiceRecord ] = await Promise.all([ arenaPromise, customPromise, warzonePromise, campaignPromise ]);
 
 		// Use gamertag from server for proper capitilization
-		const gamertag = arenaServiceRecord.PlayerId.Gamertag;
+		gamertag = arenaServiceRecord.PlayerId.Gamertag;
 		if (gamertag == null) throw new Error('Invalid Gamertag');
 
 		// Get ISO times for each game mode

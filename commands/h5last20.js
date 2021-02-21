@@ -8,29 +8,20 @@ module.exports = {
 	usage: '[-OPTION] [GAMERTAG]',
 	supportsProfiles: true,
 
-	async execute(message, args) {
-		let gamerTag = '';
+	async execute(message, args, gamertag) {
 		let option = '';
 		if (args.length) {
-			if (args[0].startsWith('-')) {
 				option = args.shift().substring(1).toLowerCase();
 				if (option !== 'arena' && option !== 'warzone' && option !== 'custom' && option !== 'campaign') {
 					return message.reply('Invalid option. Use either arena, warzone, custom, or campaign.');
 				}
-			}
-		}
-		if (args.length) {
-			gamerTag = args.join(' ');
-		}
-		else {
-			gamerTag = message.client.profiles.get(message.author.id);
 		}
 		let matchHistory = [];
-		matchHistory = await halo5.getMatchHistory(gamerTag, 20, 0, option);
+		matchHistory = await halo5.getMatchHistory(gamertag, 20, 0, option);
 		if (!matchHistory.length) {
-			return message.channel.send(`No matches found for ${gamerTag}.`);
+			return message.channel.send(`No matches found for ${gamertag}.`);
 		}
-		gamerTag = matchHistory[0].Players[0].Player.Gamertag;
+		gamertag = matchHistory[0].Players[0].Player.Gamertag;
 		const results = [];
 		let matchesToday = 0;
 		const today = new Date(Date.now());
@@ -77,7 +68,7 @@ module.exports = {
 		midString = '---|' + midString;
 		lossString = '-  |' + lossString;
 
-		const gamertagURL = gamerTag.split(' ').join('%20');
+		const gamertagURL = gamertag.split(' ').join('%20');
 		const embed = new Discord.MessageEmbed();
 		const data = [];
 		data.push('```diff');
@@ -92,7 +83,7 @@ module.exports = {
 		data.push('```');
 
 		embed
-			.setTitle(gamerTag)
+			.setTitle(gamertag)
 			.setURL(`https://www.halowaypoint.com/en-us/games/halo-5-guardians/xbox-one/game-history/players/${gamertagURL}?gameModeFilter=${option}&count=20`)
 			.addFields({ name: 'Last 20 games:', value: data },
 			)

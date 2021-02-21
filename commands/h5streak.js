@@ -8,20 +8,13 @@ module.exports = {
 	supportsProfiles: true,
 	aliases: [ 'streak', 's' ],
 
-	async execute(message, args) {
-		let playerName = '';
-		if (args.length) {
-			playerName = args.join(' ');
-		}
-		else {
-			playerName = message.client.profiles.get(message.author.id);
-		}
+	async execute(message, args, gamertag) {
 		try{
-			const matchHistory = await halo5.getMatchHistory(playerName);
+			const matchHistory = await halo5.getMatchHistory(gamertag);
 			const selectedMode = 1;
 			let matches = matchHistory.filter(match => match.Id.GameMode === selectedMode);
 			if (matches.length === 0) {
-				return message.channel.send(`No games found for ${playerName}.`);
+				return message.channel.send(`No games found for ${gamertag}.`);
 			}
 			let grabCount = 0;
 			const streakType = matches.shift().Players[0].Result;
@@ -38,12 +31,12 @@ module.exports = {
 					}
 				}
 				if (lastResult === streakType) {
-					matches = await halo5.getMatchHistory(playerName, 50, 25 * grabCount);
+					matches = await halo5.getMatchHistory(gamertag, 50, 25 * grabCount);
 					grabCount++;
 				}
 			}
 			const data = [];
-			const firstLine = `${playerName} is on a `;
+			const firstLine = `${gamertag} is on a `;
 			switch (streakType) {
 			case (0):
 				data.push(firstLine + 'DNF streak. Quitter.');
@@ -63,7 +56,7 @@ module.exports = {
 		}
 		catch (err) {
 			if (err.type === 'invalid-json') {
-				message.reply(`Sorry, there was an error processing the streak. Is the Gamertag "${playerName}" correct?`);
+				message.reply(`Sorry, there was an error processing the streak. Is the Gamertag "${gamertag}" correct?`);
 			}
 			else { throw err; }
 		}
