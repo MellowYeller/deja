@@ -1,8 +1,8 @@
 node_modules/
 cache/*
-./src/commands/test.js
-./src/config.json
-./built
-./built/*
+src/commands/test.js
+src/config.json
+built
+built/*
 package-lock.json
 *.swp

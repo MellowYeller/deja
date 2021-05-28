@@ -3,15 +3,15 @@ const Discord = require('discord.js');
 const { prefix, token, developerIds } = require('./config.json');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.name, command);
 }
 client.profiles = new Discord.Collection();
-const profileDirs = fs.readdirSync('./cache/users');
+const profileDirs = fs.readdirSync('../cache/users');
 for (const dir of profileDirs) {
-	const profile = require(`./cache/users/${dir}/profile.json`);
+	const profile = require(`../cache/users/${dir}/profile.json`);
 	client.profiles.set(profile.id, profile.gamertag);
 }
 const cooldowns = new Discord.Collection();
