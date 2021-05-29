@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/.",
+    "start": "node --experimental-modules ./built/.",
     "lint": "eslint ."
   },
   "keywords": [
@@ -22,5 +22,8 @@
     "xbox"
   ],
   "author": "Mitchell Vivian",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^15.6.1"
+  }
 }
